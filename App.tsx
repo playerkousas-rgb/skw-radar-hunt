@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, StatusBar, LogBox } from 'react-native';
+import { StyleSheet, View, StatusBar, LogBox, ScrollView, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -127,10 +127,18 @@ export default function App() {
     }
   };
 
+  // 針對 Web 平台使用 ScrollView 解決 Google Sites 嵌入高度切斷問題
+  const Container = Platform.OS === 'web' ? ScrollView : View;
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content" backgroundColor={Colors.bg} />
-      <View style={styles.container}>{renderScreen()}</View>
+      <Container 
+        style={styles.container} 
+        contentContainerStyle={Platform.OS === 'web' ? styles.scrollContent : undefined}
+      >
+        {renderScreen()}
+      </Container>
     </SafeAreaProvider>
   );
 }
@@ -139,6 +147,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.bg,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   loading: {
     flex: 1,
